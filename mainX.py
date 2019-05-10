@@ -7,6 +7,92 @@ import requests
 import shutil
 from threading import Thread
 from imageai.Prediction import ImagePrediction
+import tkinter
+
+################GUI SET FOR RUN PROGRAM#######################
+root = tkinter.Tk()
+root.title("SmartDetectionCCTV")
+root.minsize(width=600, height=300)
+root.maxsize(width=600, height=300)
+text_var = tkinter.StringVar()
+text_var.set("test")
+
+
+def Save_URLandOTHER():
+    global URLcctv1, URLcctv2, Pathsave, left_limit, left
+    global right, right_limit, up_limit, down_limit, tokenLine
+    URLcctv1 = answer_1.get()
+    URLcctv2 = answer_2.get()
+    Pathsave = answer_3.get()
+    left_limit = answer_4.get()
+    left = answer_5.get()
+    right = answer_6.get()
+    right_limit = answer_7.get()
+    up_limit = answer_8.get()
+    down_limit = answer_9.get()
+    tokenLine = answer_10.get()
+    label_loading.config(text="SAVE")
+
+def Run_program():
+    root.destroy()
+
+
+# Text
+label_1 = tkinter.Label(root, text="URL CCTV Detect and saveImage : ")
+label_2 = tkinter.Label(root, text="URL CCTV saveVideo : ")
+label_3 = tkinter.Label(root, text="Path save File : ")
+label_4 = tkinter.Label(root, text="Line left limit input 1-10: ")
+label_5 = tkinter.Label(root, text="Line left  input 1-10: ")
+label_6 = tkinter.Label(root, text="Line right input 1-10: ")
+label_7 = tkinter.Label(root, text="Line right limit input 1-10: ")
+label_8 = tkinter.Label(root, text="Line up limit input 1-10: ")
+label_9 = tkinter.Label(root, text="Line down limit input 1-10: ")
+label_10 = tkinter.Label(root, text="Token message for line : ")
+label_loading = tkinter.Label(root, text="non-save")
+
+# Entry
+answer_1 = tkinter.Entry(width="50")
+answer_2 = tkinter.Entry(width="50")
+answer_3 = tkinter.Entry(width="50")
+answer_4 = tkinter.Entry(width="50")
+answer_5 = tkinter.Entry(width="50")
+answer_6 = tkinter.Entry(width="50")
+answer_7 = tkinter.Entry(width="50")
+answer_8 = tkinter.Entry(width="50")
+answer_9 = tkinter.Entry(width="50")
+answer_10 = tkinter.Entry(width="50")
+
+# Button
+btn1 = tkinter.Button(height=1, width=20, text="SAVE", fg="white", bg="green", command=Save_URLandOTHER)
+btn2 = tkinter.Button(height=1, width=20, text="Run", fg="yellow", bg="black", command=Run_program)
+
+# plan GUI
+label_1.grid(row="0", column="0")
+answer_1.grid(row="0", column="1")
+label_2.grid(row="1", column="0")
+answer_2.grid(row="1", column="1")
+label_3.grid(row="2", column="0")
+answer_3.grid(row="2", column="1")
+label_4.grid(row="3", column="0")
+answer_4.grid(row="3", column="1")
+label_5.grid(row="4", column="0")
+answer_5.grid(row="4", column="1")
+label_6.grid(row="5", column="0")
+answer_6.grid(row="5", column="1")
+label_7.grid(row="6", column="0")
+answer_7.grid(row="6", column="1")
+label_8.grid(row="7", column="0")
+answer_8.grid(row="7", column="1")
+label_9.grid(row="8", column="0")
+answer_9.grid(row="8", column="1")
+label_10.grid(row="9")
+answer_10.grid(row="9", column="1")
+btn1.grid(row="10")
+label_loading.grid(row="10", column="1")
+btn2.grid(row="12", column="1")
+root.mainloop()
+
+########################################
 '''
 # set time Run Program
 while True:
@@ -15,19 +101,19 @@ while True:
     if "07:30" == time.strftime("%H:%M", time.localtime()):
         break
 '''
+
+
 # Alert Line
-url = 'https://notify-api.line.me/api/notify'
-token = 'CJPhtEYFbF1l53D8itWCetndYPk0cWafKQWDSdjJlWJ'
-headers = {'content-type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token}
+token = tokenLine
 
 # open cctv
 cap = cv2.VideoCapture()
-cap.open("outpyRight.mp4")
+cap.open(URLcctv1)
 cap1 = cv2.VideoCapture()
-cap1.open("...")
+cap1.open(URLcctv2)
 
 # pathdir file
-pathsetfile = "E:\\projectdetectlistImageandVideo"
+pathsetfile = Pathsave
 
 # Number of days to delete directory
 
@@ -49,6 +135,8 @@ def _lineNotify(tokens, payload, file=None):
 
 def alert_function(cnt, Time, path, Name, per, tokens):
     msg = 'ขณะนี้จับรถย้อนศรได้ ID%d วันที่ %s' % (cnt, Time)
+    url = 'https://notify-api.line.me/api/notify'
+    headers = {'Authorization': 'Bearer ' + token}
     r = requests.post(url, headers=headers, data={'message': msg})
     notifyFile(path, cnt, Name, per, tokens)
     print(r.text)
@@ -153,12 +241,12 @@ frameArea = newX * newY
 areaTH = frameArea / 200
 
 # Lines
-left_limit = int(6 * (newX / 10))
-line_left = int(7 * (newX / 10))
-line_right = int(7 * (newX / 10))
-right_limit = int(9 * (newX / 10))
-up_limit = int(2.5 * (newY / 10))
-down_limit = int(9 * (newY / 10))
+left_limit = int(float(left_limit) * (newX / 10))
+line_left = int(float(left) * (newX / 10))
+line_right = int(float(right) * (newX / 10))
+right_limit = int(float(right_limit) * (newX / 10))
+up_limit = int(float(up_limit) * (newY / 10))
+down_limit = int(float(down_limit) * (newY / 10))
 
 # print pixel in line
 print("Right line x:", str(line_right))
